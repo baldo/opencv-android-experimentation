@@ -85,7 +85,18 @@ class FdView extends SampleCvViewBase {
                     , new Size(faceSize, faceSize), new Size());
 
             for (Rect r : faces.toArray())
+            {
                 Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+            	int y0, y1, x0, x1;
+            	x0 = Math.min(r.x, mRgba.cols());
+            	y0 = Math.min(r.y, mRgba.rows());
+            	x1 = Math.min(r.x+r.width, mRgba.cols());
+            	y1 = Math.min(r.y+r.height, mRgba.rows());
+            	
+                mRgba = mRgba.submat(y0, y1, x0, x1);
+                //System.out.println("IMAGE x: " + mRgba.cols() + " y: " + mRgba.rows());
+            	//System.out.println("RECT  x: " + r.x + " y: " + r.y + " w: " + r.width + " h: " + r.height);
+            }
         }
 
         Bitmap bmp = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.RGB_565/*.ARGB_8888*/);
