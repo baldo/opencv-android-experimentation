@@ -94,7 +94,7 @@ class FdView extends SampleCvViewBase {
             	x1 = Math.min(r.x+r.width, mRgba.cols());
             	y1 = Math.min(r.y+r.height, mRgba.rows());
             	
-                mRgba = mRgba.submat(y0, y1, x0, x1);
+//                mRgba = mRgba.submat(y0, y1, x0, x1);
 				try {
 					FileOutputStream out;
 					out = getContext().openFileOutput("temp.png", Context.MODE_PRIVATE);

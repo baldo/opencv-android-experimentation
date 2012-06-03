@@ -16,12 +16,13 @@ public class MoodDetector {
 	private static final String API_SECRET = "f899a88bb6324544d125cb655c6d2978";
 
 	public Mood detectMood(final File faceImageFile) {
+		System.out.println("XXXXXXXXXXXX: " + faceImageFile);
 		final FaceClient client = new DefaultFaceClient(API_KEY, API_SECRET);
 		final Photo photo;
 		try {
 			photo = client.detect(faceImageFile);
 		} catch (final Exception e) {
-			System.out.println("Could not get mood: " + e.getStackTrace().toString());
+			e.printStackTrace();
 			return null;
 		}
 		if (photo == null) {
