@@ -15,6 +15,7 @@ import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
+import org.rhok.hh.hackingautism.mooddetector.MoodDetector;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -94,8 +95,19 @@ class FdView extends SampleCvViewBase {
             	y1 = Math.min(r.y+r.height, mRgba.rows());
             	
                 mRgba = mRgba.submat(y0, y1, x0, x1);
-                //System.out.println("IMAGE x: " + mRgba.cols() + " y: " + mRgba.rows());
-            	//System.out.println("RECT  x: " + r.x + " y: " + r.y + " w: " + r.width + " h: " + r.height);
+				try {
+					FileOutputStream out;
+					out = getContext().openFileOutput("temp.png", Context.MODE_PRIVATE);
+					Bitmap b = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.RGB_565/*.ARGB_8888*/);
+					b.compress(Bitmap.CompressFormat.PNG, 90, out);
+					out.close();
+					
+					new MoodDetector().detectMood(new File(getContext().getFilesDir(), "temp.png"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            
             }
         }
 
