@@ -87,7 +87,7 @@ class FdView extends SampleCvViewBase {
 
             for (Rect r : faces.toArray())
             {
-                Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+//                Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
             	int y0, y1, x0, x1;
             	x0 = Math.min(r.x, mRgba.cols());
             	y0 = Math.min(r.y, mRgba.rows());
@@ -98,7 +98,8 @@ class FdView extends SampleCvViewBase {
 				try {
 					FileOutputStream out;
 					out = getContext().openFileOutput("temp.png", Context.MODE_PRIVATE);
-					Bitmap b = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.RGB_565/*.ARGB_8888*/);
+					Bitmap b = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
+					Utils.matToBitmap(mRgba, b);
 					b.compress(Bitmap.CompressFormat.PNG, 90, out);
 					out.close();
 					
