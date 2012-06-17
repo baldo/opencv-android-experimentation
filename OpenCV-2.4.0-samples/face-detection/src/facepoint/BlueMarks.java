@@ -20,6 +20,8 @@ import org.opencv.core.Rect;
 public class BlueMarks {
 	long minimumRegions; // Minimum number of blue cluster that has to be found
 	long startThreshold;// Start of threshold; will be reduced until
+	long stopThreshold;// FIXME Start of threshold; will be reduced until
+	long stepThreshold;// FIXME Start of threshold; will be reduced until
 	// enough marks have been found
 	Mat image; // Actual image
 	long width, height;
@@ -33,12 +35,14 @@ public class BlueMarks {
 	Point searchLostOneClusterWindow;
 
 	// blue regions are within the entire picture
-	public void setBlueMarksValues(Mat image, long startThr, long minimumMark, Rect frameWindow) {
+	public void setBlueMarksValues(Mat image, long startThr, long stopThr, long stepThr, long minimumMark, Rect frameWindow) {
 		this.image = image;
 		this.width = image.width();
 		this.height = image.height();
 		minimumRegions = minimumMark;
 		startThreshold = startThr;
+		stopThreshold = stopThr;
+		stepThreshold = stepThr;
 		this.frameWindow = frameWindow;
 	}
 
@@ -57,16 +61,14 @@ public class BlueMarks {
 		while (cluster.size() < minimumRegions) {
 			//System.out.println("BM: " + threshold);
 
-			if (threshold < 1) {
+			if (threshold < stopThreshold) {
 				System.out.println("No chance to find blue marks!");
 				return null;
 			}
 
-			threshold--;
+			threshold -= stepThreshold;
 
 			cluster = new ArrayList<PointCluster>();
-			long time = System.currentTimeMillis();
-			long oldTime = time;
 			
 
 //			for (long y = frameWindow.y; y < frameWindow.height; y++)
@@ -74,10 +76,6 @@ public class BlueMarks {
 					for (long y = frameWindow.y; y < (frameWindow.y + frameWindow.height); y++)
 						for (long x = frameWindow.x; x < (frameWindow.x + frameWindow.width); x++) {
 
-					final long dt = time - oldTime;
-					System.out.println(dt + " " + dt / 1000);
-					oldTime = time;
-					time = System.currentTimeMillis();
 							
 					long sig = significance1(x, y);
 					// System.out.println("BM: SIG: " + sig);

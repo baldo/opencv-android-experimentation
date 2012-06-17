@@ -101,7 +101,7 @@ class FdView extends SampleCvViewBase {
 //            	Rect rect = null;
             	
             	BlueMarks blueMarks = new BlueMarks();
-            	blueMarks.setBlueMarksValues(mRgba, 1, MINIMUM_REGIONS, r);
+            	blueMarks.setBlueMarksValues(mRgba, 180, 100, 20, MINIMUM_REGIONS, r);
             	
     			List<PointCluster> cluster = blueMarks.firstLocate(); // auffinden der Punkte
     			
