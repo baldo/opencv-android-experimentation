@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -15,15 +16,18 @@ import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
-import org.rhok.hh.hackingautism.mooddetector.MoodDetector;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import facepoint.BlueMarks;
+import facepoint.PointCluster;
 
 class FdView extends SampleCvViewBase {
     private static final String TAG = "Sample::FdView";
+	private static final int MINIMUM_REGIONS = 10;
+	private static final int[][] REGIONS = { { 0, 1 }, { 2, 5 }, { 6, 9 }};
     private Mat                 mRgba;
     private Mat                 mGray;
 
@@ -87,15 +91,43 @@ class FdView extends SampleCvViewBase {
 
             for (Rect r : faces.toArray())
             {
-//                Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
-            	int y0, y1, x0, x1;
-            	x0 = Math.min(r.x, mRgba.cols());
-            	y0 = Math.min(r.y, mRgba.rows());
-            	x1 = Math.min(r.x+r.width, mRgba.cols());
-            	y1 = Math.min(r.y+r.height, mRgba.rows());
+                Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+//            	int y0, y1, x0, x1;
+//            	x0 = Math.min(r.x, mRgba.cols());
+//            	y0 = Math.min(r.y, mRgba.rows());
+//            	x1 = Math.min(r.x+r.width, mRgba.cols());
+//            	y1 = Math.min(r.y+r.height, mRgba.rows());
+//            	
+//            	Rect rect = null;
             	
+            	BlueMarks blueMarks = new BlueMarks();
+            	blueMarks.setBlueMarksValues(mRgba, 1, MINIMUM_REGIONS, r);
+            	
+    			List<PointCluster> cluster = blueMarks.firstLocate(); // auffinden der Punkte
+    			
+    			if (cluster != null) {
+	    			
+	    			//System.out.println("AFP: Test");
+	    			// Sort cluster marks
+	    			facepoint.SortRegions sortRegions = new facepoint.SortRegions(); //TODO Sortregion
+	    			cluster = sortRegions.sortRegionsCalc(MINIMUM_REGIONS, REGIONS, cluster);
+	    			
+	    			//System.out.println("AFP: Test2");
+	
+	    			// Assign each cluster an permanent index-number after sorting.
+	    			for (int n = 0; n < cluster.size(); n++) {
+	    				cluster.get(n).nr = n;
+	    			}
+	    			
+	    			paint(cluster);
+    			
+    			}
+    		    
+
+
 //                mRgba = mRgba.submat(y0, y1, x0, x1);
-				try {
+/*
+            	try {
 					FileOutputStream out;
 					out = getContext().openFileOutput("temp.png", Context.MODE_PRIVATE);
 					Bitmap b = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
@@ -108,7 +140,7 @@ class FdView extends SampleCvViewBase {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	            
+	*/            
             }
         }
 
@@ -124,7 +156,41 @@ class FdView extends SampleCvViewBase {
         }
     }
 
-    @Override
+    private void paint(List<PointCluster> regions) {
+  		//System.out.println("test " + rcValue.length + ", " + rcValue[1].x + rcValue[1].y + rcValue[1].width + rcValue[1].height);
+//  		for(int k = 0; k < rcValue.length; k++) {
+//  			recValue[k] = new Rectangle(rcValue[k].x, rcValue[k].y, rcValue[k].width, rcValue[k].height);
+//  		}
+
+  		if (regions != null)
+		      for (PointCluster reg : regions) {
+		        Rect r = reg.getRectangle();
+
+                Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+//		        g.drawRect(r.x, r.y, r.width, r.height);
+//		        g.drawString("" + regions.indexOf(reg), r.x, r.y - 2);
+		        
+//				g.setColor(java.awt.Color.GREEN);
+		        // draw Rect
+		        //g.drawRect(recValue.x, recValue.y, recValue.width, recValue.height); 
+//				for(int k = 0; k < recValue.length; k++) {//face //eyes
+//					//faceDetection.searchOpenCVAreas(path, frame); //TODO
+//					//System.out.println("IP: path:" + path + ", "+ seq + ", " + recValue.length);
+//					//fD.searchOpenCVAreas(path, seq);TODO YYY
+//					
+//					//recValue = fD.getRecValue();
+//					//recValue[k] = fD.getRecValue()[k]; TODO YYY
+//					
+//					//g.drawRect(fD.getRecValue()[k].x, fD.getRecValue()[k].y,fD.getRecValue()[k].width, fD.getRecValue()[k].height); 
+//	                Core.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+//					g.drawRect(recValue[k].x, recValue[k].y, recValue[k].width, recValue[k].height); 		
+//					//System.out.println("IP:" + recValue[k].x+","+ recValue[k].y);
+//					
+//				}
+		      }
+	}
+
+	@Override
     public void run() {
         super.run();
 
