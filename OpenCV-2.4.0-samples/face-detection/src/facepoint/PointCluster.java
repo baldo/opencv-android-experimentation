@@ -15,7 +15,7 @@ import org.opencv.core.Rect;
  * Known Bugs and Restrictions: -none- <br>
  */
 public class PointCluster {
-	final long nbws = 4;// Neighbour window size 2 Pixel TODO: anzahl vielleicht
+	final long nbws = 4;// Neighbor window size 2 Pixel TODO: anzahl vielleicht
 	// 3??
 	public int nr; // FIXME
 	long missing = 0;// Number of frames where the cluster could not be tracked
@@ -25,8 +25,6 @@ public class PointCluster {
 	long maxCol;// TODO Should be changed to class Point
 	long minSig;
 	long maxSig;
-	long frameid = 0;
-	long zlock = 0;
 	static Point zeroClusterCenter = new Point(0,0);
 	static Point oneClusterCenter = new Point(0,0);
 	Point distanceZeroCluster = new Point();

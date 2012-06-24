@@ -9,6 +9,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
+import android.util.Log;
+
 /**
  * Description: Detects the blue points in the frame<br>
  * Author: T. Tews & H. Faasch <br>
@@ -230,10 +232,11 @@ public class BlueMarks {
 	 */
 	private long significance1(long x, long y) {
 		double[] pixel = image.get((int) y, (int) x); // FIXME typen aufraeumen
+		
 
-		long red = Math.round(pixel[0]); // val >> 16 & 0xff; // Rotanteil
-		long green = Math.round(pixel[1]); // val >> 8 & 0xff; // Gruen
-		long blue = Math.round(pixel[2]); // val & 0xff; // blau
+		long red = (long)pixel[0]; // val >> 16 & 0xff; // Rotanteil
+		long green = (long)pixel[1]; // val >> 8 & 0xff; // Gruen
+		long blue = (long)pixel[2]; // val & 0xff; // blau
 
 		// Farbspektrum
 

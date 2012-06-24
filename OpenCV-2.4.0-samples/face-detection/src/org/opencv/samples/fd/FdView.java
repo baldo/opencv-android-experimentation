@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import facepoint.BlueMarks;
 import facepoint.PointCluster;
+import facepoint.calculateGeometry;
 
 class FdView extends SampleCvViewBase {
     private static final String TAG = "Sample::FdView";
@@ -114,10 +115,12 @@ class FdView extends SampleCvViewBase {
 	    			
 	    			//System.out.println("AFP: Test2");
 	
-	    			// Assign each cluster an permanent index-number after sorting.
+	    			// Assign each cluster a permanent index-number after sorting.
 	    			for (int n = 0; n < cluster.size(); n++) {
 	    				cluster.get(n).nr = n;
 	    			}
+	    			
+	    			calculateGeometry geom = new calculateGeometry(cluster);
 	    			
 	    			paint(cluster);
     			
