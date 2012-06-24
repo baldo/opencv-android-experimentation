@@ -30,6 +30,7 @@ public class BlueMarks {
 	Rect frameWindow;// Region to be searched for marks; important if other
 	List<PointCluster> cluster = new ArrayList<PointCluster>(); // cluster points
 	Set<PointCluster> deleteSet = new HashSet<PointCluster>(); // Delete
+	int significance[][];
 	// points
 	// list
 
@@ -46,6 +47,7 @@ public class BlueMarks {
 		stopThreshold = stopThr;
 		stepThreshold = stepThr;
 		this.frameWindow = frameWindow;
+		significance = new int[(int)width][(int)height];
 	}
 
 	/**
@@ -73,13 +75,12 @@ public class BlueMarks {
 			cluster = new ArrayList<PointCluster>();
 			
 
-//			for (long y = frameWindow.y; y < frameWindow.height; y++)
-//				for (long x = frameWindow.x; x < frameWindow.width; x++) {
-					for (long y = frameWindow.y; y < (frameWindow.y + frameWindow.height); y++)
-						for (long x = frameWindow.x; x < (frameWindow.x + frameWindow.width); x++) {
+			for (int y = frameWindow.y; y < (frameWindow.y + frameWindow.height); y++)
+				for (int x = frameWindow.x; x < (frameWindow.x + frameWindow.width); x++) {
 
 							
-					long sig = significance1(x, y);
+					int sig = significance1(x, y);
+					significance[x][y] = sig;
 					// System.out.println("BM: SIG: " + sig);
 
 					if (sig >= threshold) {
@@ -89,7 +90,7 @@ public class BlueMarks {
 								if (inserted == null) { // include new data
 														// inside the new
 														// cluster
-									pc.insert(x, y, significance1(x, y));
+									pc.insert(x, y, sig);
 									inserted = pc;
 								} else { // join cluster
 									inserted.join(pc);
@@ -129,20 +130,20 @@ public class BlueMarks {
 	 */
 	public void follow(PointCluster region) {
 
-		long[] locxarr = { 3,// 0
+		int[] locxarr = { 3,// 0
 				3, 3, 3, 3, 3, // 1
 				3, 3, 3, 3, 3, // 6
 				3, 2, 2, 2, 3, // 11
 				3, 3, 3, 3 };// 16
 
-		long[] locyarr = { 3,// 0
+		int[] locyarr = { 3,// 0
 				3, 3, 3, 3, 3, // 1
 				3, 8, 3, 3, 3, // 6
 				3, 3, 1, 3, 1, // 11
 				3, 3, 3, 3 };// 16
 
-		long loctolx = locxarr[region.nr];
-		long loctoly = locyarr[region.nr];
+		int loctolx = locxarr[region.nr];
+		int loctoly = locyarr[region.nr];
 
 		long th = region.minSig;
 		//System.out.println("BM: Region.minSig " + region.minSig);
@@ -173,15 +174,15 @@ public class BlueMarks {
 			}
 
 			newCluster = null;
-			for (long y = region.minRow - loctoly; y <= region.maxRow + loctoly; y++) {
-				for (long x = region.minCol - loctolx; x <= region.maxCol
+			for (int y = (int)region.minRow - loctoly; y <= region.maxRow + loctoly; y++) {
+				for (int x = (int)region.minCol - loctolx; x <= region.maxCol
 						+ loctolx; x++) {
 //					 System.out.println("BM1: " + y + ", "+ region.minRow +
 //					 ", " + region.maxRow + ", " + loctoly);
 //					 System.out.println("BM2: " + y + ", "+ region.minCol +
 //					 ", " + region.maxCol + ", " + loctolx);
 
-					long sig = significance1(x, y);
+					int sig = significance[x][y];
 					// System.out.println("BM: SIG: " + sig);
 					// System.out.print(f.format(sig) + ", ");
 
@@ -203,8 +204,8 @@ public class BlueMarks {
 			 //System.out.println("BM: TH: " + th + " size " + size +
 			// " minPoints " + minPoints);
 			if (th == 1 & size < minPoints) { // old
-				// if (size < minPoints | size > 80) { //TODO: Clustergr��e
-				// ver�ndern...???
+				// if (size < minPoints | size > 80) { //TODO: Clustergröße
+				// verändern...???
 				break;
 			}
 		} // while
@@ -230,7 +231,7 @@ public class BlueMarks {
 	 * @param y
 	 * @return Value of significance of the selected pixel
 	 */
-	private long significance1(long x, long y) {
+	private int significance1(long x, long y) {
 		double[] pixel = image.get((int) y, (int) x); // FIXME typen aufraeumen
 		
 
@@ -246,7 +247,7 @@ public class BlueMarks {
 		if (blue > green)
 			sig += blue - green;
 
-		return sig;
+		return (int)sig;
 	}
 	
 	
@@ -306,15 +307,15 @@ public class BlueMarks {
 			}
 
 			newCluster = null;
-			for (long y = Math.round(searchLostZeroClusterWindow.y) - loctoly; y <= searchLostZeroClusterWindow.y + loctoly; y++) {
-				for (long x = Math.round(searchLostZeroClusterWindow.x) - loctolx; x <= searchLostZeroClusterWindow.x
+			for (int y = (int)searchLostZeroClusterWindow.y - (int)loctoly; y <= searchLostZeroClusterWindow.y + loctoly; y++) {
+				for (int x = (int)searchLostZeroClusterWindow.x - (int)loctolx; x <= searchLostZeroClusterWindow.x
 						+ loctolx; x++) {
 //					 System.out.println("BM1: " + y + ", "+ region.minRow +
 //					 ", " + region.maxRow + ", " + loctoly);
 //					 System.out.println("BM2: " + y + ", "+ region.minCol +
 //					 ", " + region.maxCol + ", " + loctolx);
 
-					long sig = significance1(x, y);
+					long sig = significance[x][y];
 					// System.out.println("BM: SIG: " + sig);
 					// System.out.print(f.format(sig) + ", ");
 
